@@ -1,31 +1,21 @@
 // Schema de Prisma para Copa FunTour 2026
-//
-// Decisión de modelado:
-// Una inscripción (Registration) está identificada por el teléfono del capitán (único).
-// Los deportes seleccionados se modelan como una tabla hija (RegistrationSport)
-// con una fila por deporte, garantizando la regla "1 equipo de fútbol y/o 1 de vóley por teléfono".
-// Esto permite reflejar de forma natural el requisito de Google Sheets (1 fila por deporte).
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  // Cambia a "postgresql" en producción.
-  // SQLite está bien en dev. Para prod usa Neon/Supabase/Railway.
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model Registration {
-  id         String             @id @default(cuid())
-  // Identificador único del equipo (normalizado, solo dígitos con prefijo internacional)
-  phone      String             @unique
+  id         String              @id @default(cuid())
+  phone      String              @unique
   captain    String
   teamName   String
   city       String
-  createdAt  DateTime           @default(now())
-  updatedAt  DateTime           @updatedAt
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
   sports     RegistrationSport[]
 
   @@index([city])
@@ -35,13 +25,11 @@ model Registration {
 model RegistrationSport {
   id             String       @id @default(cuid())
   registrationId String
-  // "football" | "volleyball"
   sport          String
   createdAt      DateTime     @default(now())
 
   registration   Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
 
-  // Un equipo no puede estar en el mismo deporte dos veces
   @@unique([registrationId, sport])
   @@index([sport])
 }
