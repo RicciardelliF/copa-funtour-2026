@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/Logo';
 
@@ -32,7 +33,9 @@ export default function AdminLogin() {
   return (
     <div className="min-h-dvh hero-bg">
       <header className="container-wide flex items-center py-5">
-        <Logo />
+        <Link href="/" aria-label="Volver al inicio" className="inline-flex">
+          <Logo />
+        </Link>
       </header>
       <main className="container-narrow pt-8">
         <div className="card">
@@ -52,6 +55,11 @@ export default function AdminLogin() {
               {loading ? 'Entrando...' : 'Entrar'}
             </button>
           </form>
+        </div>
+        <div className="mt-4 text-center">
+          <Link href="/" className="text-sm font-semibold text-ocean-700 hover:underline">
+            ← Volver al inicio
+          </Link>
         </div>
       </main>
     </div>
