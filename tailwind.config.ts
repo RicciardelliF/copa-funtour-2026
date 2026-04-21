@@ -5,37 +5,38 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Paleta FunTour — ajusta estos HEX si el PDF de marca pide otros valores
+        // Paleta FunTour corporativa
+        // Rosa principal: #E62D7C · Azul profundo: #003385
         brand: {
-          50: '#FFF4EC',
-          100: '#FFE2CF',
-          200: '#FFC39E',
-          300: '#FFA06D',
-          400: '#FF7F3D',
-          500: '#FF5A1F', // Coral FunTour (primario)
-          600: '#E8420A',
-          700: '#BD3209',
-          800: '#8F260A',
-          900: '#6B1D08',
+          50: '#FFF0F7',
+          100: '#FFD9EA',
+          200: '#FDB0D2',
+          300: '#F97DB4',
+          400: '#F14F98',
+          500: '#E62D7C', // Rosa FunTour (primario)
+          600: '#C91E68',
+          700: '#A31553',
+          800: '#7D1040',
+          900: '#570B2D',
         },
         ocean: {
-          50: '#ECFEFF',
-          100: '#CFFAFE',
-          200: '#A5F3FC',
-          300: '#67E8F9',
-          400: '#22D3EE',
-          500: '#0BB6D1',
-          600: '#0891B2',
-          700: '#0E7490',
-          800: '#155E75',
-          900: '#0F2A3A', // Navy profundo
+          50: '#EEF2FB',
+          100: '#D6DEF3',
+          200: '#ACBCE6',
+          300: '#7F97D6',
+          400: '#4E6FBD',
+          500: '#1F4AA0',
+          600: '#0A3A93',
+          700: '#003385', // Azul FunTour (secundario)
+          800: '#00286A',
+          900: '#001C4C',
         },
         sun: {
           400: '#FACC15',
           500: '#EAB308',
         },
         ink: '#0F172A',
-        paper: '#FFFBF7',
+        paper: '#FFF7FB',
       },
       fontFamily: {
         display: [
@@ -57,7 +58,7 @@ const config: Config = {
       },
       boxShadow: {
         soft: '0 10px 30px -15px rgba(15, 23, 42, 0.2)',
-        pop: '0 20px 60px -20px rgba(255, 90, 31, 0.35)',
+        pop: '0 20px 60px -20px rgba(230, 45, 124, 0.35)',
       },
       borderRadius: {
         xl2: '1.25rem',
