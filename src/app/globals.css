@@ -97,7 +97,7 @@ body {
 /* Gradiente hero */
 .hero-bg {
   background:
-    radial-gradient(60% 80% at 20% 0%, rgba(255, 90, 31, 0.18) 0%, transparent 60%),
-    radial-gradient(50% 70% at 90% 20%, rgba(8, 145, 178, 0.18) 0%, transparent 60%),
-    linear-gradient(180deg, #FFFBF7 0%, #FFF4EC 100%);
+    radial-gradient(60% 80% at 20% 0%, rgba(230, 45, 124, 0.18) 0%, transparent 60%),
+    radial-gradient(50% 70% at 90% 20%, rgba(0, 51, 133, 0.16) 0%, transparent 60%),
+    linear-gradient(180deg, #FFF7FB 0%, #FFE7F2 100%);
 }
