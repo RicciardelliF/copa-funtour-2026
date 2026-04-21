@@ -9,7 +9,7 @@ export function Logo({ className }: { className?: string }) {
       <img
         src="/logo-funtour.svg"
         alt="FunTour Viajes"
-        className="h-10 w-auto sm:h-12"
+        className="h-14 w-auto sm:h-16"
         draggable={false}
       />
     </span>
