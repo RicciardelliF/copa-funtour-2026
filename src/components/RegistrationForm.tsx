@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Sport, SPORT_LABELS, SPORT_MIN_PLAYERS } from '@/lib/validators';
+import { SPANISH_CITIES, isValidSpanishCity } from '@/lib/spanish-cities';
 import { useToast } from './Toast';
 
 export type Registration = {
@@ -29,7 +30,6 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
   const [minConfirmed, setMinConfirmed] = useState<boolean>(!!existing);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-
   const isEditing = !!existing;
 
   function toggleSport(s: Sport) {
@@ -42,7 +42,11 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
     const e: Record<string, string> = {};
     if (captain.trim().length < 2) e.captain = 'Pon el nombre del capitán';
     if (teamName.trim().length < 2) e.teamName = 'Ponle un nombre a tu equipo';
-    if (city.trim().length < 2) e.city = '¿De qué ciudad sois?';
+    if (city.trim().length < 2) {
+      e.city = '¿De qué ciudad sois?';
+    } else if (!isValidSpanishCity(city)) {
+      e.city = 'Elige una ciudad de España de la lista';
+    }
     if (sports.length === 0) e.sports = 'Elige al menos un deporte';
     if (!minConfirmed) e.minConfirmed = 'Confirma que tenéis jugadores suficientes';
     setErrors(e);
@@ -132,14 +136,22 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
         />
       </Field>
 
-      <Field label="Ciudad" error={errors.city}>
+      <Field label="Ciudad" error={errors.city} hint="Elige una ciudad de España de la lista">
         <input
           className={`input ${errors.city ? 'input-error' : ''}`}
           value={city}
           onChange={e => setCity(e.target.value)}
           placeholder="Madrid"
           maxLength={60}
+          list="spanish-cities-list"
+          autoComplete="address-level2"
+          spellCheck={false}
         />
+        <datalist id="spanish-cities-list">
+          {SPANISH_CITIES.map(c => (
+            <option key={c} value={c} />
+          ))}
+        </datalist>
       </Field>
 
       <div>
@@ -169,7 +181,11 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
       {sports.length > 0 && (
         <label
           className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition-colors ${
-            minConfirmed ? 'border-brand-500 bg-brand-50' : errors.minConfirmed ? 'border-red-400' : 'border-ink/10 bg-white'
+            minConfirmed
+              ? 'border-brand-500 bg-brand-50'
+              : errors.minConfirmed
+              ? 'border-red-400'
+              : 'border-ink/10 bg-white'
           }`}
         >
           <input
@@ -192,8 +208,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
 
       {isEditing && (
         <p className="text-center text-xs text-ink/50">
-          Se ha encontrado tu inscripción automáticamente desde la base de datos. Puedes entrar con tu teléfono
-          desde cualquier móvil.
+          Se ha encontrado tu inscripción automáticamente desde la base de datos. Puedes entrar con tu teléfono desde cualquier móvil.
         </p>
       )}
     </form>
@@ -203,16 +218,19 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
 function Field({
   label,
   error,
+  hint,
   children,
 }: {
   label: string;
   error?: string;
+  hint?: string;
   children: React.ReactNode;
 }) {
   return (
     <div>
       <label className="mb-1.5 block text-sm font-semibold">{label}</label>
       {children}
+      {hint && !error && <p className="mt-1 text-xs text-ink/50">{hint}</p>}
       {error && <p className="mt-1.5 text-sm text-red-600">{error}</p>}
     </div>
   );
