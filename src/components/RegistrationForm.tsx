@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Sport, SPORT_LABELS, SPORT_MIN_PLAYERS } from '@/lib/validators';
-import { SPANISH_CITIES, isValidSpanishCity } from '@/lib/spanish-cities';
+import { SPANISH_PROVINCES, isValidSpanishProvince } from '@/lib/spanish-cities';
 import { useToast } from './Toast';
 
 export type Registration = {
@@ -25,7 +25,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
   const toast = useToast();
   const [captain, setCaptain] = useState(existing?.captain ?? '');
   const [teamName, setTeamName] = useState(existing?.teamName ?? '');
-  const [city, setCity] = useState(existing?.city ?? '');
+  const [province, setProvince] = useState(existing?.city ?? '');
   const [sports, setSports] = useState<Sport[]>(existing?.sports ?? []);
   const [minConfirmed, setMinConfirmed] = useState<boolean>(!!existing);
   const [saving, setSaving] = useState(false);
@@ -34,7 +34,6 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
 
   function toggleSport(s: Sport) {
     setSports(curr => (curr.includes(s) ? curr.filter(x => x !== s) : [...curr, s]));
-    // Al cambiar deportes, se pide re-confirmar el mínimo
     setMinConfirmed(false);
   }
 
@@ -42,10 +41,10 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
     const e: Record<string, string> = {};
     if (captain.trim().length < 2) e.captain = 'Pon el nombre del capitán';
     if (teamName.trim().length < 2) e.teamName = 'Ponle un nombre a tu equipo';
-    if (city.trim().length < 2) {
-      e.city = '¿De qué ciudad sois?';
-    } else if (!isValidSpanishCity(city)) {
-      e.city = 'Elige una ciudad de España de la lista';
+    if (province.trim().length < 2) {
+      e.province = '¿De qué provincia sois?';
+    } else if (!isValidSpanishProvince(province)) {
+      e.province = 'Elige una provincia de España de la lista';
     }
     if (sports.length === 0) e.sports = 'Elige al menos un deporte';
     if (!minConfirmed) e.minConfirmed = 'Confirma que tenéis jugadores suficientes';
@@ -65,7 +64,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
           phone: initialPhone,
           captain,
           teamName,
-          city,
+          city: province,
           sports,
           minPlayersConfirmed: true,
         }),
@@ -136,20 +135,20 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
         />
       </Field>
 
-      <Field label="Ciudad" error={errors.city} hint="Elige una ciudad de España de la lista">
+      <Field label="Provincia" error={errors.province} hint="Elige tu provincia de España de la lista">
         <input
-          className={`input ${errors.city ? 'input-error' : ''}`}
-          value={city}
-          onChange={e => setCity(e.target.value)}
+          className={`input ${errors.province ? 'input-error' : ''}`}
+          value={province}
+          onChange={e => setProvince(e.target.value)}
           placeholder="Madrid"
           maxLength={60}
-          list="spanish-cities-list"
-          autoComplete="address-level2"
+          list="spanish-provinces-list"
+          autoComplete="address-level1"
           spellCheck={false}
         />
-        <datalist id="spanish-cities-list">
-          {SPANISH_CITIES.map(c => (
-            <option key={c} value={c} />
+        <datalist id="spanish-provinces-list">
+          {SPANISH_PROVINCES.map(p => (
+            <option key={p} value={p} />
           ))}
         </datalist>
       </Field>
