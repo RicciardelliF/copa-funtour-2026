@@ -1,12 +1,9 @@
 /**
- * Lista oficial de las 50 provincias de España.
- * Las provincias con denominación bilingüe aceptan ambas formas.
- *
- * La comparación normaliza (minúsculas, sin acentos, sin espacios extras)
- * de modo que 'Madrid', 'MADRID' y 'madrid' cuentan todos como válidos.
+ * Lista oficial de las 50 provincias espanolas.
+ * Fuente: INE (Instituto Nacional de Estadistica).
+ * Se incluyen las denominaciones bilingues oficiales para las provincias con lengua cooficial.
  */
-
-export const SPANISH_PROVINCES: readonly string[] = [
+export const SPANISH_PROVINCES = [
   'Álava',
   'Albacete',
   'Alicante',
@@ -14,7 +11,7 @@ export const SPANISH_PROVINCES: readonly string[] = [
   'Asturias',
   'Ávila',
   'Badajoz',
-  'Islas Baleares',
+  'Baleares',
   'Barcelona',
   'Burgos',
   'Cáceres',
@@ -24,28 +21,24 @@ export const SPANISH_PROVINCES: readonly string[] = [
   'Ciudad Real',
   'Córdoba',
   'Cuenca',
-  'Gerona',
-  'Girona',
+  'Gerona / Girona',
   'Granada',
   'Guadalajara',
-  'Guipúzcoa',
+  'Gipúzkoa / Guipúzcoa',
   'Huelva',
   'Huesca',
   'Jaén',
-  'La Coruña',
-  'A Coruña',
+  'La Coruña / A Coruña',
   'La Rioja',
   'Las Palmas',
   'León',
-  'Lérida',
-  'Lleida',
+  'Lérida / Lleida',
   'Lugo',
   'Madrid',
   'Málaga',
   'Murcia',
   'Navarra',
-  'Orense',
-  'Ourense',
+  'Orense / Ourense',
   'Palencia',
   'Pontevedra',
   'Salamanca',
@@ -64,4 +57,16 @@ export const SPANISH_PROVINCES: readonly string[] = [
 ] as const;
 
 /** Alias de compatibilidad — los componentes existentes siguen funcionando. */
-export const SPANISH_CIT$U�5�4��$�d��4U3������&�Ɨ�V�6FV�&6��&6�;6�G&���֖�;�67V�2�6��6V�F�2���W��'BgV�7F�����&�Ɨ�U7�6�6�G����WC�7G&��r��7G&��r��&WGW&���W@����&�Ɨ�R�t�dBr���&W�6R����S3��S3fe��r�rr���F���vW$66R����&W�6R���2��r�rr���&W�6R����S#��S#��S#3&+E��r�"r"���G&�҂���Р�W��'B���&�Ɨ�U7�6�6�G�2��&�Ɨ�U7�6�&�f��6RӰ��6��7B��$�ĕ�TE�4UB��Wr6WB�5�4��$�d��4U2�����&�Ɨ�U7�6�6�G�������FWgVV�fRG'VR6��&�f��6���F�6FW��7FRV��Ɨ7F�f�6�����W��'BgV�7F����5fƖE7�6�&�f��6R���WC�7G&��r��&���V����b���WB��G�V�b��WB��w7G&��rr�&WGW&�f�6S��&WGW&���$�ĕ�TE�4UB�2���&�Ɨ�U7�6�6�G����WB����Р��Ɩ2FR6��F�&�ƖFB���W��'B6��7B�5fƖE7�6�6�G���5fƖE7�6�&�f��6S�
+export const SPANISH_CITIES = SPANISH_PROVINCES;
+
+export type SpanishProvince = (typeof SPANISH_PROVINCES)[number];
+export type SpanishCity = SpanishProvince;
+
+export function isValidSpanishProvince(value: string): boolean {
+  return (SPANISH_PROVINCES as readonly string[]).includes(value);
+}
+
+/** Alias de compatibilidad. */
+export function isValidSpanishCity(value: string): boolean {
+  return isValidSpanishProvince(value);
+}
