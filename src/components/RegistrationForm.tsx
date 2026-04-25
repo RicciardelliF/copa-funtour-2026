@@ -243,6 +243,12 @@ function SportCard({
   emoji,
   detail,
   active,
+  onClick,
+}: {
+  label: string;
+  emoji: string;
+  detail: string;
+  active: boolean;
   onClick: () => void;
 }) {
   return (
