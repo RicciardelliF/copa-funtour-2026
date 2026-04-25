@@ -150,7 +150,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
             active={sports.includes('football')} onClick={() => toggleSport('football')}
           />
           <SportCard
-            label="Vóley" emoji="🏀" detail="Mínimo 6 jugadores"
+            label="Vóley" emoji="🏐" detail="Mínimo 6 jugadores"
             active={sports.includes('volleyball')} onClick={() => toggleSport('volleyball')}
           />
         </div>
