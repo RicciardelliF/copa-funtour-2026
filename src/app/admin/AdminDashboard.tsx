@@ -57,7 +57,7 @@ function Dashboard({ initialRegistrations, initialCounts }: Props) {
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Â¿Seguro que quieres borrar este equipo? Se borrarÃ¡ tambiÃ©n de Google Sheets.')) return;
+    if (!confirm('¿Seguro que quieres borrar este equipo? Se borrará también de Google Sheets.')) return;
     const res = await fetch(`/api/admin/registrations/${id}`, { method: 'DELETE' });
     if (!res.ok) {
       const j = await res.json().catch(() => ({}));
@@ -100,7 +100,7 @@ function Dashboard({ initialRegistrations, initialCounts }: Props) {
             <span className="hidden chip-ocean sm:inline-flex">Admin</span>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/equipos" className="btn-ghost !py-2">Vista pÃºblica</Link>
+            <Link href="/equipos" className="btn-ghost !py-2">Vista pública</Link>
             <button onClick={handleLogout} className="btn-ghost !py-2">Salir</button>
           </div>
         </div>
@@ -109,8 +109,8 @@ function Dashboard({ initialRegistrations, initialCounts }: Props) {
       <main className="container-wide py-6">
         <section className="grid gap-3 sm:grid-cols-3">
           <StatCard label="Equipos totales" value={counts.teams} color="bg-ink text-white" />
-          <StatCard label="Inscritos en fÃºtbol" value={counts.football} color="bg-brand-500 text-white" />
-          <StatCard label="Inscritos en vÃ³ley" value={counts.volleyball} color="bg-ocean-600 text-white" />
+          <StatCard label="Inscritos en fútbol" value={counts.football} color="bg-brand-500 text-white" />
+          <StatCard label="Inscritos en vóley" value={counts.volleyball} color="bg-ocean-600 text-white" />
         </section>
 
         <section className="mt-5 rounded-3xl bg-white p-4 shadow-soft ring-1 ring-ink/5">
@@ -120,17 +120,17 @@ function Dashboard({ initialRegistrations, initialCounts }: Props) {
                 Todos <span className="ml-1 opacity-60">({registrations.length})</span>
               </FilterBtn>
               <FilterBtn active={filter === 'football'} onClick={() => setFilter('football')}>
-                â½ï¸ FÃºtbol <span className="ml-1 opacity-60">({counts.football})</span>
+                ⚽️ Fútbol <span className="ml-1 opacity-60">({counts.football})</span>
               </FilterBtn>
               <FilterBtn active={filter === 'volleyball'} onClick={() => setFilter('volleyball')}>
-                ð VÃ³ley <span className="ml-1 opacity-60">({counts.volleyball})</span>
+                🏐 Vóley <span className="ml-1 opacity-60">({counts.volleyball})</span>
               </FilterBtn>
             </div>
             <div className="flex items-center gap-2">
               <input
                 type="search"
                 className="input !py-2 !text-sm"
-                placeholder="Buscar equipo, ciudad, capitÃ¡n o telÃ©fono"
+                placeholder="Buscar equipo, ciudad, capitán o teléfono"
                 value={query}
                 onChange={e => setQuery(e.target.value)}
               />
@@ -138,9 +138,9 @@ function Dashboard({ initialRegistrations, initialCounts }: Props) {
           </div>
 
           <div className="mt-3 flex flex-wrap gap-2 text-sm">
-            <a href="/api/admin/export" className="btn-ghost !py-2">â¬ï¸ Exportar CSV</a>
+            <a href="/api/admin/export" className="btn-ghost !py-2">⬇️ Exportar CSV</a>
             <button onClick={handleResync} disabled={resyncing} className="btn-ghost !py-2">
-              {resyncing ? 'Resincronizando...' : 'ð Resync Google Sheets'}
+              {resyncing ? 'Resincronizando...' : '🔁 Resync Google Sheets'}
             </button>
           </div>
         </section>
@@ -148,9 +148,9 @@ function Dashboard({ initialRegistrations, initialCounts }: Props) {
         <section className="mt-4 overflow-hidden rounded-3xl bg-white shadow-soft ring-1 ring-ink/5">
           <div className="hidden grid-cols-[1.4fr_1.2fr_1fr_1fr_0.8fr_1.2fr_auto] gap-3 border-b border-ink/5 bg-ink/[0.02] px-4 py-3 text-xs font-semibold uppercase tracking-wide text-ink/50 md:grid">
             <span>Equipo</span>
-            <span>CapitÃ¡n</span>
+            <span>Capitán</span>
             <span>Ciudad</span>
-            <span>TelÃ©fono</span>
+            <span>Teléfono</span>
             <span>Localizador</span>
             <span>Deportes</span>
             <span className="text-right">Acciones</span>
@@ -166,12 +166,12 @@ function Dashboard({ initialRegistrations, initialCounts }: Props) {
                 >
                   <div>
                     <p className="font-semibold">{r.teamName}</p>
-                    <p className="text-xs text-ink/50 md:hidden">{r.captain} Â· {r.city}</p>
+                    <p className="text-xs text-ink/50 md:hidden">{r.captain} · {r.city}</p>
                   </div>
                   <div className="hidden text-sm text-ink/70 md:block">{r.captain}</div>
                   <div className="hidden text-sm text-ink/70 md:block">{r.city}</div>
                   <div className="hidden text-sm tabular-nums text-ink/70 md:block">+{r.phone}</div>
-                  <div className="hidden text-sm text-ink/70 md:block">{r.localizador ?? 'â'}</div>
+                  <div className="hidden text-sm text-ink/70 md:block">{r.localizador ?? '—'}</div>
                   <div className="flex flex-wrap gap-1.5">
                     {r.sports.map(s => (
                       <span key={s} className={s === 'football' ? 'chip-brand' : 'chip-ocean'}>
@@ -278,19 +278,19 @@ function EditModal({
             <h3 className="font-display text-lg font-extrabold">Editar equipo</h3>
             <p className="text-xs text-ink/50">ID: {registration.id}</p>
           </div>
-          <button onClick={onClose} className="text-ink/40 hover:text-ink">â</button>
+          <button onClick={onClose} className="text-ink/40 hover:text-ink">✕</button>
         </div>
         <form onSubmit={submit} className="space-y-3">
-          <Field label="CapitÃ¡n"><input className="input" value={captain} onChange={e => setCaptain(e.target.value)} /></Field>
+          <Field label="Capitán"><input className="input" value={captain} onChange={e => setCaptain(e.target.value)} /></Field>
           <Field label="Equipo"><input className="input" value={teamName} onChange={e => setTeamName(e.target.value)} /></Field>
           <Field label="Ciudad"><input className="input" value={city} onChange={e => setCity(e.target.value)} /></Field>
           <Field label="Localizador"><input className="input" value={localizador} onChange={e => setLocalizador(e.target.value)} maxLength={20} placeholder="Opcional" /></Field>
-          <Field label="TelÃ©fono"><input className="input" value={phone} onChange={e => setPhone(e.target.value)} /></Field>
+          <Field label="Teléfono"><input className="input" value={phone} onChange={e => setPhone(e.target.value)} /></Field>
           <div>
             <label className="mb-1 block text-sm font-semibold">Deportes</label>
             <div className="flex gap-2">
-              <Toggle active={sports.includes('football')} onClick={() => toggle('football')}>â½ï¸ FÃºtbol</Toggle>
-              <Toggle active={sports.includes('volleyball')} onClick={() => toggle('volleyball')}>ð VÃ³ley</Toggle>
+              <Toggle active={sports.includes('football')} onClick={() => toggle('football')}>⚽️ Fútbol</Toggle>
+              <Toggle active={sports.includes('volleyball')} onClick={() => toggle('volleyball')}>🏐 Vóley</Toggle>
             </div>
           </div>
           <div className="flex gap-2 pt-2">
