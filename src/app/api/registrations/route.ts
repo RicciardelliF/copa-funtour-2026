@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
       captain: parsed.data.captain,
       teamName: parsed.data.teamName,
       city: parsed.data.city,
+      localizador: parsed.data.localizador,
       sports: parsed.data.sports,
     });
     return NextResponse.json({ registration: dto });
