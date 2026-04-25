@@ -1,5 +1,4 @@
 'use client';
-
 import { useState } from 'react';
 import { Sport, SPORT_LABELS, SPORT_MIN_PLAYERS } from '@/lib/validators';
 import { SPANISH_PROVINCES, isValidSpanishProvince } from '@/lib/spanish-cities';
@@ -30,6 +29,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
   const [minConfirmed, setMinConfirmed] = useState<boolean>(!!existing);
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
   const isEditing = !!existing;
 
   function toggleSport(s: Sport) {
@@ -41,7 +41,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
     const e: Record<string, string> = {};
     if (captain.trim().length < 2) e.captain = 'Pon el nombre del capitán';
     if (teamName.trim().length < 2) e.teamName = 'Ponle un nombre a tu equipo';
-    if (province.trim().length < 2) {
+    if (!province) {
       e.province = '¿De qué provincia sois?';
     } else if (!isValidSpanishProvince(province)) {
       e.province = 'Elige una provincia de España de la lista';
@@ -71,11 +71,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
       });
       if (!res.ok) {
         const j = await res.json().catch(() => ({}));
-        toast({
-          kind: 'error',
-          title: 'No se pudo guardar',
-          desc: j.error ?? 'Revisa los datos e inténtalo otra vez.',
-        });
+        toast({ kind: 'error', title: 'No se pudo guardar', desc: j.error ?? 'Revisa los datos e inténtalo otra vez.' });
         return;
       }
       const j = await res.json();
@@ -95,9 +91,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
   const minPlayersText =
     sports.length === 0
       ? null
-      : sports
-          .map(s => `${SPORT_LABELS[s]}: mínimo ${SPORT_MIN_PLAYERS[s]} jugadores`)
-          .join(' · ');
+      : sports.map(s => `${SPORT_LABELS[s]}: mínimo ${SPORT_MIN_PLAYERS[s]} jugadores`).join(' · ');
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
@@ -135,40 +129,29 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
         />
       </Field>
 
-      <Field label="Provincia" error={errors.province} hint="Elige tu provincia de España de la lista">
-        <input
+      <Field label="Provincia" error={errors.province}>
+        <select
           className={`input ${errors.province ? 'input-error' : ''}`}
           value={province}
           onChange={e => setProvince(e.target.value)}
-          placeholder="Madrid"
-          maxLength={60}
-          list="spanish-provinces-list"
-          autoComplete="address-level1"
-          spellCheck={false}
-        />
-        <datalist id="spanish-provinces-list">
+        >
+          <option value="">Selecciona tu provincia…</option>
           {SPANISH_PROVINCES.map(p => (
-            <option key={p} value={p} />
+            <option key={p} value={p}>{p}</option>
           ))}
-        </datalist>
+        </select>
       </Field>
 
       <div>
         <label className="mb-2 block text-sm font-semibold">¿A qué os apuntáis?</label>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <SportCard
-            label="Fútbol"
-            emoji="⚽️"
-            detail="Mínimo 4 jugadores (3 + portero)"
-            active={sports.includes('football')}
-            onClick={() => toggleSport('football')}
+            label="Fútbol" emoji="⚽️" detail="Mínimo 4 jugadores (3 + portero)"
+            active={sports.includes('football')} onClick={() => toggleSport('football')}
           />
           <SportCard
-            label="Vóley"
-            emoji="🏐"
-            detail="Mínimo 6 jugadores"
-            active={sports.includes('volleyball')}
-            onClick={() => toggleSport('volleyball')}
+            label="Vóley" emoji="🏀" detail="Mínimo 6 jugadores"
+            active={sports.includes('volleyball')} onClick={() => toggleSport('volleyball')}
           />
         </div>
         {errors.sports && <p className="mt-2 text-sm text-red-600">{errors.sports}</p>}
@@ -215,15 +198,9 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
 }
 
 function Field({
-  label,
-  error,
-  hint,
-  children,
+  label, error, hint, children,
 }: {
-  label: string;
-  error?: string;
-  hint?: string;
-  children: React.ReactNode;
+  label: string; error?: string; hint?: string; children: React.ReactNode;
 }) {
   return (
     <div>
@@ -236,23 +213,13 @@ function Field({
 }
 
 function SportCard({
-  label,
-  emoji,
-  detail,
-  active,
-  onClick,
+  label, emoji, detail, active, onClick,
 }: {
-  label: string;
-  emoji: string;
-  detail: string;
-  active: boolean;
-  onClick: () => void;
+  label: string; emoji: string; detail: string; active: boolean; onClick: () => void;
 }) {
   return (
     <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
+      type="button" onClick={onClick} aria-pressed={active}
       className={`group relative flex items-center gap-3 rounded-2xl border p-4 text-left transition-all ${
         active
           ? 'border-brand-500 bg-brand-50 shadow-pop'
