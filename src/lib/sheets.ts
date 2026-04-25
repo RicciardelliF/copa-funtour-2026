@@ -19,6 +19,7 @@
  *   F: deporte         ("Fútbol" | "Vóley")
  *   G: creado_en       (ISO)
  *   H: actualizado_en  (ISO)
+ *   I: localizador
  */
 
 import { google, sheets_v4 } from 'googleapis';
@@ -34,6 +35,7 @@ const HEADER_ROW = [
   'deporte',
   'creado_en',
   'actualizado_en',
+  'localizador',
 ];
 
 const COL_REGISTRO_ID = 0;
@@ -45,6 +47,7 @@ export type SheetRow = {
   city: string;
   phone: string;
   teamName: string;
+  localizador?: string;
   sport: Sport;
   createdAt: string;
   updatedAt: string;
@@ -78,7 +81,7 @@ function tabName(): string {
 }
 
 function quotedTab(): string {
-  return `'${tabName().replace(/'/g, "''")}'`;
+  return `'${tabName().replace(/'/g, "''")}`;
 }
 
 function sportToLabel(s: Sport): string {
@@ -100,7 +103,7 @@ async function getSheetId(sheets: sheets_v4.Sheets): Promise<number> {
 export async function ensureHeaders(): Promise<void> {
   if (!isSheetsConfigured()) return;
   const sheets = getClient();
-  const range = `${quotedTab()}!A1:H1`;
+  const range = `${quotedTab()}!A1:I1`;
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId: spreadsheetId(),
     range,
@@ -147,6 +150,7 @@ function rowValues(r: SheetRow): (string | number)[] {
     sportToLabel(r.sport),
     r.createdAt,
     r.updatedAt,
+    r.localizador ?? '',
   ];
 }
 
@@ -207,7 +211,7 @@ export async function reconcileRegistration(
     const ex = refreshedBySport.get(label);
     if (ex) {
       updatesData.push({
-        range: `${quotedTab()}!A${ex.rowIndex}:H${ex.rowIndex}`,
+        range: `${quotedTab()}!A${ex.rowIndex}:I${ex.rowIndex}`,
         values: [rowValues(d) as (string | number)[]],
       });
     } else {
@@ -229,7 +233,7 @@ export async function reconcileRegistration(
   if (newRows.length > 0) {
     await sheets.spreadsheets.values.append({
       spreadsheetId: spreadsheetId(),
-      range: `${quotedTab()}!A:H`,
+      range: `${quotedTab()}!A:I`,
       valueInputOption: 'USER_ENTERED',
       insertDataOption: 'INSERT_ROWS',
       requestBody: { values: newRows.map(r => rowValues(r) as (string | number)[]) },
@@ -256,12 +260,12 @@ export async function fullResync(allRows: SheetRow[]): Promise<void> {
   // Borra todo debajo del header
   await sheets.spreadsheets.values.clear({
     spreadsheetId: spreadsheetId(),
-    range: `${quotedTab()}!A2:H`,
+    range: `${quotedTab()}!A2:I`,
   });
   if (allRows.length === 0) return;
   await sheets.spreadsheets.values.update({
     spreadsheetId: spreadsheetId(),
-    range: `${quotedTab()}!A2:H${allRows.length + 1}`,
+    range: `${quotedTab()}!A2:I${allRows.length + 1}`,
     valueInputOption: 'USER_ENTERED',
     requestBody: { values: allRows.map(r => rowValues(r) as (string | number)[]) },
   });
