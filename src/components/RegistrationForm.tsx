@@ -1,7 +1,7 @@
 'use client';
-
 import { useState } from 'react';
 import { Sport, SPORT_LABELS, SPORT_MIN_PLAYERS } from '@/lib/validators';
+import { SPANISH_PROVINCES, isValidSpanishProvince } from '@/lib/spanish-cities';
 import { useToast } from './Toast';
 
 export type Registration = {
@@ -10,7 +10,6 @@ export type Registration = {
   captain: string;
   teamName: string;
   city: string;
-  localizador?: string;
   sports: Sport[];
 };
 
@@ -25,8 +24,9 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
   const toast = useToast();
   const [captain, setCaptain] = useState(existing?.captain ?? '');
   const [teamName, setTeamName] = useState(existing?.teamName ?? '');
-  const [city, setCity] = useState(existing?.city ?? '');
-  const [localizador, setLocalizador] = useState(existing?.localizador ?? '');
+  const [localizador, setLocalizador] = useState('');
+  const [province,
+          localizador, setProvince] = useState(existing?.city ?? '');
   const [sports, setSports] = useState<Sport[]>(existing?.sports ?? []);
   const [minConfirmed, setMinConfirmed] = useState<boolean>(!!existing);
   const [saving, setSaving] = useState(false);
@@ -36,7 +36,6 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
 
   function toggleSport(s: Sport) {
     setSports(curr => (curr.includes(s) ? curr.filter(x => x !== s) : [...curr, s]));
-    // Al cambiar deportes, se pide re-confirmar el mínimo
     setMinConfirmed(false);
   }
 
@@ -44,7 +43,11 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
     const e: Record<string, string> = {};
     if (captain.trim().length < 2) e.captain = 'Pon el nombre del capitán';
     if (teamName.trim().length < 2) e.teamName = 'Ponle un nombre a tu equipo';
-    if (city.trim().length < 2) e.city = '¿De qué ciudad sois?';
+    if (!province) {
+      e.province = '¿De qué provincia sois?';
+    } else if (!isValidSpanishProvince(province)) {
+      e.province = 'Elige una provincia de España de la lista';
+    }
     if (sports.length === 0) e.sports = 'Elige al menos un deporte';
     if (!minConfirmed) e.minConfirmed = 'Confirma que tenéis jugadores suficientes';
     setErrors(e);
@@ -63,19 +66,14 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
           phone: initialPhone,
           captain,
           teamName,
-          city,
-          localizador: localizador || undefined,
+          city: province,
           sports,
           minPlayersConfirmed: true,
         }),
       });
       if (!res.ok) {
         const j = await res.json().catch(() => ({}));
-        toast({
-          kind: 'error',
-          title: 'No se pudo guardar',
-          desc: j.error ?? 'Revisa los datos e inténtalo otra vez.',
-        });
+        toast({ kind: 'error', title: 'No se pudo guardar', desc: j.error ?? 'Revisa los datos e inténtalo otra vez.' });
         return;
       }
       const j = await res.json();
@@ -95,9 +93,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
   const minPlayersText =
     sports.length === 0
       ? null
-      : sports
-          .map(s => `${SPORT_LABELS[s]}: mínimo ${SPORT_MIN_PLAYERS[s]} jugadores`)
-          .join(' · ');
+      : sports.map(s => `${SPORT_LABELS[s]}: mínimo ${SPORT_MIN_PLAYERS[s]} jugadores`).join(' · ');
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
@@ -135,46 +131,47 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
         />
       </Field>
 
-      <Field label="Ciudad" error={errors.city}>
-        <input
-          className={`input ${errors.city ? 'input-error' : ''}`}
-          value={city}
-          onChange={e => setCity(e.target.value)}
-          placeholder="Madrid"
-          maxLength={60}
-        />
-      </Field>
-
-      <Field
-        label="Número de localizador"
-        hint="Tu número de localizador está en la programación de las discotecas 😉"
-        error={errors.localizador}
-      >
-        <input
-          className={`input ${errors.localizador ? 'input-error' : ''}`}
-          value={localizador}
-          onChange={e => setLocalizador(e.target.value)}
-          placeholder="Ej: ABC-123"
-          maxLength={20}
-        />
+      <Field label="Provincia" error={errors.province}>
+        <select
+          className={`input ${errors.province ? 'input-error' : ''}`}
+          value={province}
+          onChange={e => setProvince(e.target.value)}
+        >
+          <option value="">Selecciona tu provincia…</option>
+          {SPANISH_PROVINCES.map(p => (
+            <option key={p} value={p}>{p}</option>
+          ))}
+        </select>
       </Field>
 
       <div>
         <label className="mb-2 block text-sm font-semibold">¿A qué os apuntáis?</label>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <SportCard
-            label="Fútbol"
-            emoji="⚽️"
-            detail="Mínimo 4 jugadores (3 + portero)"
-            active={sports.includes('football')}
-            onClick={() => toggleSport('football')}
+            label="Fútbol" emoji="⚽️" detail="Mínimo 4 jugadores (3 + portero)"
+            active={sports.includes('football')} onClick={() => toggleSport('football')}
           />
           <SportCard
-            label="Vóley"
-            emoji="🏐"
-            detail="Mínimo 6 jugadores"
-            active={sports.includes('volleyball')}
-            onClick={() => toggleSport('volleyball')}
+            label="Vóley" emoji="🏐" detail="Mínimo 6 jugadores"
+            active={sports.includes('volleyball')} onClick={() => toggleSport('volleyball')}
+          />
+        </div>
+
+        {/* Número de localizador */}
+        <div>
+          <label className="mb-2 block text-sm font-semibold">
+            Número de localizador
+          </label>
+          <p className="text-xs text-gray-500 mb-2">
+            Tu número de localizador está en la programación de las discotecas 😉
+          </p>
+          <input
+            type="number"
+            inputMode="numeric"
+            placeholder="Ej: 123456"
+            value={localizador}
+            onChange={e => setLocalizador(e.target.value)}
+            className="mt-1 h-5 w-5 accent-brand-500"
           />
         </div>
         {errors.sports && <p className="mt-2 text-sm text-red-600">{errors.sports}</p>}
@@ -186,7 +183,11 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
       {sports.length > 0 && (
         <label
           className={`flex cursor-pointer items-start gap-3 rounded-2xl border p-4 transition-colors ${
-            minConfirmed ? 'border-brand-500 bg-brand-50' : errors.minConfirmed ? 'border-red-400' : 'border-ink/10 bg-white'
+            minConfirmed
+              ? 'border-brand-500 bg-brand-50'
+              : errors.minConfirmed
+              ? 'border-red-400'
+              : 'border-ink/10 bg-white'
           }`}
         >
           <input
@@ -209,8 +210,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
 
       {isEditing && (
         <p className="text-center text-xs text-ink/50">
-          Se ha encontrado tu inscripción automáticamente desde la base de datos. Puedes entrar con tu teléfono
-          desde cualquier móvil.
+          Se ha encontrado tu inscripción automáticamente desde la base de datos. Puedes entrar con tu teléfono desde cualquier móvil.
         </p>
       )}
     </form>
@@ -218,44 +218,28 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
 }
 
 function Field({
-  label,
-  error,
-  hint,
-  children,
+  label, error, hint, children,
 }: {
-  label: string;
-  error?: string;
-  hint?: string;
-  children: React.ReactNode;
+  label: string; error?: string; hint?: string; children: React.ReactNode;
 }) {
   return (
     <div>
       <label className="mb-1.5 block text-sm font-semibold">{label}</label>
       {children}
-      {hint && <p className="mt-1.5 text-xs text-ink/50">{hint}</p>}
+      {hint && !error && <p className="mt-1 text-xs text-ink/50">{hint}</p>}
       {error && <p className="mt-1.5 text-sm text-red-600">{error}</p>}
     </div>
   );
 }
 
 function SportCard({
-  label,
-  emoji,
-  detail,
-  active,
-  onClick,
+  label, emoji, detail, active, onClick,
 }: {
-  label: string;
-  emoji: string;
-  detail: string;
-  active: boolean;
-  onClick: () => void;
+  label: string; emoji: string; detail: string; active: boolean; onClick: () => void;
 }) {
   return (
     <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
+      type="button" onClick={onClick} aria-pressed={active}
       className={`group relative flex items-center gap-3 rounded-2xl border p-4 text-left transition-all ${
         active
           ? 'border-brand-500 bg-brand-50 shadow-pop'
