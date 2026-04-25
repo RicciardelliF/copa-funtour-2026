@@ -36,17 +36,17 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
 
   function toggleSport(s: Sport) {
     setSports(curr => (curr.includes(s) ? curr.filter(x => x !== s) : [...curr, s]));
-    // Al cambiar deportes, se pide re-confirmar el mÃ­nimo
+    // Al cambiar deportes, se pide re-confirmar el mínimo
     setMinConfirmed(false);
   }
 
   function validate() {
     const e: Record<string, string> = {};
-    if (captain.trim().length < 2) e.captain = 'Pon el nombre del capitÃ¡n';
+    if (captain.trim().length < 2) e.captain = 'Pon el nombre del capitán';
     if (teamName.trim().length < 2) e.teamName = 'Ponle un nombre a tu equipo';
-    if (city.trim().length < 2) e.city = 'Â¿De quÃ© ciudad sois?';
+    if (city.trim().length < 2) e.city = '¿De qué ciudad sois?';
     if (sports.length === 0) e.sports = 'Elige al menos un deporte';
-    if (!minConfirmed) e.minConfirmed = 'Confirma que tenÃ©is jugadores suficientes';
+    if (!minConfirmed) e.minConfirmed = 'Confirma que tenéis jugadores suficientes';
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -74,19 +74,19 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
         toast({
           kind: 'error',
           title: 'No se pudo guardar',
-          desc: j.error ?? 'Revisa los datos e intÃ©ntalo otra vez.',
+          desc: j.error ?? 'Revisa los datos e inténtalo otra vez.',
         });
         return;
       }
       const j = await res.json();
       toast({
         kind: 'success',
-        title: isEditing ? 'Â¡Actualizado!' : 'Â¡Equipo inscrito!',
-        desc: isEditing ? 'Cambios guardados correctamente.' : 'Â¡Nos vemos en la cancha!',
+        title: isEditing ? '¡Actualizado!' : '¡Equipo inscrito!',
+        desc: isEditing ? 'Cambios guardados correctamente.' : '¡Nos vemos en la cancha!',
       });
       onSaved(j.registration);
     } catch (err: any) {
-      toast({ kind: 'error', title: 'Error de conexiÃ³n', desc: err.message });
+      toast({ kind: 'error', title: 'Error de conexión', desc: err.message });
     } finally {
       setSaving(false);
     }
@@ -96,30 +96,30 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
     sports.length === 0
       ? null
       : sports
-          .map(s => `${SPORT_LABELS[s]}: mÃ­nimo ${SPORT_MIN_PLAYERS[s]} jugadores`)
-          .join(' Â· ');
+          .map(s => `${SPORT_LABELS[s]}: mínimo ${SPORT_MIN_PLAYERS[s]} jugadores`)
+          .join(' · ');
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <header className="text-center">
-        <p className="text-sm text-ink/60">{isEditing ? 'EstÃ¡s editando tu inscripciÃ³n' : 'Terminemos la inscripciÃ³n'}</p>
+        <p className="text-sm text-ink/60">{isEditing ? 'Estás editando tu inscripción' : 'Terminemos la inscripción'}</p>
         <h2 className="font-display text-2xl font-extrabold">
-          {isEditing ? 'Â¡QuÃ© bueno verte de vuelta!' : 'Â¡A por ese torneo!'}
+          {isEditing ? '¡Qué bueno verte de vuelta!' : '¡A por ese torneo!'}
         </h2>
         <p className="mt-1 text-sm text-ink/60">
-          TelÃ©fono: <span className="font-semibold">+{initialPhone}</span>{' '}
+          Teléfono: <span className="font-semibold">+{initialPhone}</span>{' '}
           <button type="button" onClick={onResetPhone} className="text-brand-500 underline">
             cambiar
           </button>
         </p>
       </header>
 
-      <Field label="Nombre del capitÃ¡n" error={errors.captain}>
+      <Field label="Nombre del capitán" error={errors.captain}>
         <input
           className={`input ${errors.captain ? 'input-error' : ''}`}
           value={captain}
           onChange={e => setCaptain(e.target.value)}
-          placeholder="Laura PÃ©rez"
+          placeholder="Laura Pérez"
           autoComplete="name"
           maxLength={80}
         />
@@ -146,8 +146,8 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
       </Field>
 
       <Field
-        label="NÃºmero de localizador"
-        hint="Tu nÃºmero de localizador estÃ¡ en la programaciÃ³n de las discotecas ð"
+        label="Número de localizador"
+        hint="Tu número de localizador está en la programación de las discotecas 😉"
         error={errors.localizador}
       >
         <input
@@ -160,26 +160,26 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
       </Field>
 
       <div>
-        <label className="mb-2 block text-sm font-semibold">Â¿A quÃ© os apuntÃ¡is?</label>
+        <label className="mb-2 block text-sm font-semibold">¿A qué os apuntáis?</label>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <SportCard
-            label="FÃºtbol"
-            emoji="â½ï¸"
-            detail="MÃ­nimo 4 jugadores (3 + portero)"
+            label="Fútbol"
+            emoji="⚽️"
+            detail="Mínimo 4 jugadores (3 + portero)"
             active={sports.includes('football')}
             onClick={() => toggleSport('football')}
           />
           <SportCard
-            label="VÃ³ley"
-            emoji="ð"
-            detail="MÃ­nimo 6 jugadores"
+            label="Vóley"
+            emoji="🏐"
+            detail="Mínimo 6 jugadores"
             active={sports.includes('volleyball')}
             onClick={() => toggleSport('volleyball')}
           />
         </div>
         {errors.sports && <p className="mt-2 text-sm text-red-600">{errors.sports}</p>}
         <p className="mt-2 text-xs text-ink/50">
-          Puedes apuntarte a uno o a los dos. Si querÃ©is doble, Â¡a por todo!
+          Puedes apuntarte a uno o a los dos. Si queréis doble, ¡a por todo!
         </p>
       </div>
 
@@ -196,7 +196,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
             onChange={e => setMinConfirmed(e.target.checked)}
           />
           <span className="text-sm">
-            Confirmo que mi equipo cumple los mÃ­nimos:{' '}
+            Confirmo que mi equipo cumple los mínimos:{' '}
             <span className="font-semibold">{minPlayersText}</span>
           </span>
         </label>
@@ -204,13 +204,13 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
       {errors.minConfirmed && <p className="text-sm text-red-600">{errors.minConfirmed}</p>}
 
       <button type="submit" className="btn-primary w-full" disabled={saving}>
-        {saving ? 'Guardando...' : isEditing ? 'Guardar cambios' : 'Â¡Inscribir equipo!'}
+        {saving ? 'Guardando...' : isEditing ? 'Guardar cambios' : '¡Inscribir equipo!'}
       </button>
 
       {isEditing && (
         <p className="text-center text-xs text-ink/50">
-          Se ha encontrado tu inscripciÃ³n automÃ¡ticamente desde la base de datos. Puedes entrar con tu telÃ©fono
-          desde cualquier mÃ³vil.
+          Se ha encontrado tu inscripción automáticamente desde la base de datos. Puedes entrar con tu teléfono
+          desde cualquier móvil.
         </p>
       )}
     </form>
