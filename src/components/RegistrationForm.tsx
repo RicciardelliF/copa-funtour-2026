@@ -121,25 +121,6 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
         />
       </Field>
 
-
-        {/* Número de localizador */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Número de localizador
-          </label>
-          <p className="text-xs text-gray-500 mb-2">
-            Tu número de localizador está en la programación de las discotecas 😉
-          </p>
-          <input
-            type="text"
-            inputMode="numeric"
-            pattern="[0-9]*"
-            placeholder="Ej: 123456"
-            value={localizador}
-            onChange={e => setLocalizador(e.target.value)}
-            className="mt-1 h-5 w-5 accent-brand-500"
-          />
-        </div>
       <Field label="Nombre del equipo" error={errors.teamName}>
         <input
           className={`input ${errors.teamName ? 'input-error' : ''}`}
@@ -163,6 +144,25 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
         </select>
       </Field>
 
+      {/* Número de localizador */}
+      <div>
+        <label className="mb-1.5 block text-sm font-semibold">
+          Número de localizador
+        </label>
+        <p className="text-xs text-ink/50 mb-2">
+          Tu número de localizador está en la programación de las discotecas 😉
+        </p>
+        <input
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          placeholder="Ej: 123456"
+          value={localizador}
+          onChange={e => setLocalizador(e.target.value)}
+          className="input"
+        />
+      </div>
+
       <div>
         <label className="mb-2 block text-sm font-semibold">¿A qué os apuntáis?</label>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -175,7 +175,6 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
             active={sports.includes('volleyball')} onClick={() => toggleSport('volleyball')}
           />
         </div>
-
         {errors.sports && <p className="mt-2 text-sm text-red-600">{errors.sports}</p>}
         <p className="mt-2 text-xs text-ink/50">
           Puedes apuntarte a uno o a los dos. Si queréis doble, ¡a por todo!
