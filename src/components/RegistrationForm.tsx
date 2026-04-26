@@ -25,8 +25,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
   const [captain, setCaptain] = useState(existing?.captain ?? '');
   const [teamName, setTeamName] = useState(existing?.teamName ?? '');
   const [localizador, setLocalizador] = useState('');
-  const [province,
-          localizador, setProvince] = useState(existing?.city ?? '');
+  const [province, setProvince] = useState(existing?.city ?? '');
   const [sports, setSports] = useState<Sport[]>(existing?.sports ?? []);
   const [minConfirmed, setMinConfirmed] = useState<boolean>(!!existing);
   const [saving, setSaving] = useState(false);
@@ -67,6 +66,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
           captain,
           teamName,
           city: province,
+          localizador,
           sports,
           minPlayersConfirmed: true,
         }),
@@ -159,7 +159,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
 
         {/* Número de localizador */}
         <div>
-          <label className="mb-2 block text-sm font-semibold">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
             Número de localizador
           </label>
           <p className="text-xs text-gray-500 mb-2">
