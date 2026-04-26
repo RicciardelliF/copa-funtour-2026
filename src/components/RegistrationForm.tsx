@@ -166,8 +166,9 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
             Tu número de localizador está en la programación de las discotecas 😉
           </p>
           <input
-            type="number"
+            type="text"
             inputMode="numeric"
+            pattern="[0-9]*"
             placeholder="Ej: 123456"
             value={localizador}
             onChange={e => setLocalizador(e.target.value)}
