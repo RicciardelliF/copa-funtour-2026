@@ -10,6 +10,7 @@ export type Registration = {
   captain: string;
   teamName: string;
   city: string;
+  week?: string;
   sports: Sport[];
 };
 
@@ -25,6 +26,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
   const [captain, setCaptain] = useState(existing?.captain ?? '');
   const [teamName, setTeamName] = useState(existing?.teamName ?? '');
   const [localizador, setLocalizador] = useState('');
+  const [week, setWeek] = useState(existing?.week ?? '');
   const [province, setProvince] = useState(existing?.city ?? '');
   const [sports, setSports] = useState<Sport[]>(existing?.sports ?? []);
   const [minConfirmed, setMinConfirmed] = useState<boolean>(!!existing);
@@ -47,6 +49,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
     } else if (!isValidSpanishProvince(province)) {
       e.province = 'Elige una provincia de España de la lista';
     }
+    if (!week) e.week = 'Selecciona la semana de tu estancia';
     if (!localizador.trim()) e.localizador = 'Introduce tu número de localizador';
     if (sports.length === 0) e.sports = 'Elige al menos un deporte';
     if (!minConfirmed) e.minConfirmed = 'Confirma que tenéis jugadores suficientes';
@@ -67,6 +70,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
           captain,
           teamName,
           city: province,
+          week,
           localizador,
           sports,
           minPlayersConfirmed: true,
@@ -110,6 +114,28 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
           </button>
         </p>
       </header>
+
+      {/* Semana de estancia */}
+      <div>
+        <p className="mb-3 text-sm font-semibold">Selecciona la semana en la que estás aquí 👇🏻</p>
+        <div className="grid grid-cols-2 gap-3">
+          {['6-13 Jun', '13-20 Jun', '20-27 Jun', '27 Jun-4 Jul'].map(w => (
+            <button
+              key={w}
+              type="button"
+              onClick={() => setWeek(w)}
+              className={`rounded-2xl border p-3 text-sm font-semibold transition-all ${
+                week === w
+                  ? 'border-brand-500 bg-brand-50 text-brand-600 shadow-pop'
+                  : 'border-ink/10 bg-white text-ink hover:border-brand-200 hover:bg-brand-50/40'
+              }`}
+            >
+              {w}
+            </button>
+          ))}
+        </div>
+        {errors.week && <p className="mt-2 text-sm text-red-600">{errors.week}</p>}
+      </div>
 
       <Field label="Nombre del capitán" error={errors.captain}>
         <input
