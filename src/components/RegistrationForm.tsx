@@ -47,6 +47,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
     } else if (!isValidSpanishProvince(province)) {
       e.province = 'Elige una provincia de España de la lista';
     }
+    if (!localizador.trim()) e.localizador = 'Introduce tu número de localizador';
     if (sports.length === 0) e.sports = 'Elige al menos un deporte';
     if (!minConfirmed) e.minConfirmed = 'Confirma que tenéis jugadores suficientes';
     setErrors(e);
@@ -159,8 +160,9 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
           placeholder="Ej: 123456"
           value={localizador}
           onChange={e => setLocalizador(e.target.value)}
-          className="input"
+          className={`input ${errors.localizador ? 'input-error' : ''}`}
         />
+        {errors.localizador && <p className="mt-1.5 text-sm text-red-600">{errors.localizador}</p>}
       </div>
 
       <div>
