@@ -15,6 +15,7 @@ model Registration {
   teamName    String
   city        String
   localizador String?
+  week        String              @default("")
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
   sports      RegistrationSport[]
