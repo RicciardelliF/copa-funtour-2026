@@ -112,6 +112,8 @@ function Home() {
                   setExisting(saved);
                   setStep('form');
                 }}
+              
+                onExit={() => { setSaved(null); setPhone(''); setStep('phone'); }}
               />
             </div>
           )}
@@ -129,55 +131,35 @@ function TopBar() {
       <Link href="/" className="flex items-center">
         <Logo />
       </Link>
-      <nav className="flex items-center gap-2 text-sm">
-        <Link
-          href="/equipos"
-          className="rounded-full bg-white/70 px-3 py-1.5 text-xs font-semibold text-ink ring-1 ring-ink/10 hover:bg-white sm:px-4 sm:py-2 sm:text-sm"
-        >
-          Equipos apuntados
-        </Link>
-      </nav>
     </header>
   );
 }
 
-function SavedView({ registration, onEdit }: { registration: Registration; onEdit: () => void }) {
+function SavedView({ registration, onEdit, onExit }: { registration: Registration; onEdit: () => void; onExit: () => void }) {
   return (
-    <div className="space-y-4">
-      <div className="flex items-start gap-3">
-        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-emerald-100 text-xl">🎉</span>
-        <div>
-          <h2 className="font-display text-lg font-extrabold">¡Equipo guardado!</h2>
-          <p className="text-xs text-ink/60">Tu inscripción está confirmada.</p>
-        </div>
+    <div className="card space-y-6 text-center">
+      <div>
+        <p className="text-4xl mb-3">🎉</p>
+        <h2 className="font-display text-2xl font-extrabold">¡Inscripción confirmada!</h2>
+        <p className="mt-2 text-sm text-ink/60">
+          Equipo <span className="font-semibold">{registration.teamName}</span> registrado correctamente.
+        </p>
       </div>
-
-      <dl className="divide-y divide-ink/5 rounded-2xl bg-paper p-3">
-        <Row label="Equipo" value={registration.teamName} />
-        <Row label="Capitán" value={registration.captain} />
-        <Row label="Ciudad" value={registration.city} />
-        <Row label="Teléfono" value={`+${registration.phone}`} />
-        <Row
-          label="Deportes"
-          value={
-            <span className="flex flex-wrap gap-1.5">
-              {registration.sports.map(s => (
-                <span key={s} className={s === 'football' ? 'chip-brand' : 'chip-ocean'}>
-                  {SPORT_LABELS[s as Sport]}
-                </span>
-              ))}
-            </span>
-          }
-        />
-      </dl>
-
-      <div className="flex flex-col gap-2 sm:flex-row">
-        <button onClick={onEdit} className="btn-ghost flex-1">
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <button
+          type="button"
+          onClick={onEdit}
+          className="flex-1 rounded-2xl border border-ink/10 bg-white px-4 py-3 text-sm font-semibold text-ink hover:bg-ink/5 transition-colors"
+        >
           Editar inscripción
         </button>
-        <Link href="/equipos" className="btn-primary flex-1">
-          Ver equipos apuntados →
-        </Link>
+        <button
+          type="button"
+          onClick={onExit}
+          className="btn-primary flex-1"
+        >
+          Salir
+        </button>
       </div>
     </div>
   );
