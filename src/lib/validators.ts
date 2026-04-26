@@ -4,8 +4,8 @@ export const SPORTS = ['football', 'volleyball'] as const;
 export type Sport = (typeof SPORTS)[number];
 
 export const SPORT_LABELS: Record<Sport, string> = {
-  football: 'FÃºtbol',
-  volleyball: 'VÃ³ley',
+  football: 'Fútbol',
+  volleyball: 'Vóley',
 };
 
 export const SPORT_MIN_PLAYERS: Record<Sport, number> = {
@@ -17,7 +17,7 @@ export const registrationSchema = z.object({
   captain: z
     .string()
     .trim()
-    .min(2, 'El nombre del capitÃ¡n es muy corto')
+    .min(2, 'El nombre del capitán es muy corto')
     .max(80, 'El nombre es demasiado largo'),
   teamName: z
     .string()
@@ -31,25 +31,25 @@ export const registrationSchema = z.object({
     .max(60, 'La ciudad es demasiado larga'),
   localizador: z.string().max(20).optional(),
   week: z.string().optional(),
-  phone: z.string().trim().min(6, 'TelÃ©fono invÃ¡lido'),
+  phone: z.string().trim().min(6, 'Teléfono inválido'),
   sports: z
     .array(z.enum(SPORTS))
     .min(1, 'Elige al menos un deporte'),
-  // ConfirmaciÃ³n explÃ­cita de que cumple el mÃ­nimo de jugadores (por cada deporte elegido)
+  // Confirmación explícita de que cumple el mínimo de jugadores (por cada deporte elegido)
   minPlayersConfirmed: z.literal(true, {
     errorMap: () => ({
-      message: 'Debes confirmar que tu equipo cumple el mÃ­nimo de jugadores',
+      message: 'Debes confirmar que tu equipo cumple el mínimo de jugadores',
     }),
   }),
 });
 
 export type RegistrationInput = z.infer<typeof registrationSchema>;
 
-// Para ediciÃ³n aceptamos el mismo shape
+// Para edición aceptamos el mismo shape
 export const registrationEditSchema = registrationSchema;
 
 export const adminLoginSchema = z.object({
-  password: z.string().min(1, 'Introduce la contraseÃ±a'),
+  password: z.string().min(1, 'Introduce la contraseña'),
 });
 
 export const adminEditSchema = z.object({
