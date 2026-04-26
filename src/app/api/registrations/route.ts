@@ -7,25 +7,25 @@ import { prisma } from '@/lib/db';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
-// POST /api/registrations → crea o actualiza por teléfono
+// POST /api/registrations â crea o actualiza por telÃ©fono
 export async function POST(req: NextRequest) {
   let json: unknown;
   try {
     json = await req.json();
   } catch {
-    return NextResponse.json({ error: 'JSON inválido' }, { status: 400 });
+    return NextResponse.json({ error: 'JSON invÃ¡lido' }, { status: 400 });
   }
 
   const parsed = registrationSchema.safeParse(json);
   if (!parsed.success) {
     return NextResponse.json(
-      { error: 'Datos inválidos', details: parsed.error.flatten() },
+      { error: 'Datos invÃ¡lidos', details: parsed.error.flatten() },
       { status: 400 },
     );
   }
 
   if (!isValidPhone(parsed.data.phone)) {
-    return NextResponse.json({ error: 'Teléfono inválido' }, { status: 400 });
+    return NextResponse.json({ error: 'TelÃ©fono invÃ¡lido' }, { status: 400 });
   }
 
   try {
@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
       teamName: parsed.data.teamName,
       city: parsed.data.city,
       localizador: parsed.data.localizador,
+      week: parsed.data.week,
       sports: parsed.data.sports,
     });
     return NextResponse.json({ registration: dto });
@@ -44,11 +45,11 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// DELETE /api/registrations?phone=+34... → permite al propio usuario darse de baja
+// DELETE /api/registrations?phone=+34... â permite al propio usuario darse de baja
 export async function DELETE(req: NextRequest) {
   const rawPhone = req.nextUrl.searchParams.get('phone') ?? '';
   if (!isValidPhone(rawPhone)) {
-    return NextResponse.json({ error: 'Teléfono inválido' }, { status: 400 });
+    return NextResponse.json({ error: 'TelÃ©fono invÃ¡lido' }, { status: 400 });
   }
   const phone = normalizePhone(rawPhone);
   const reg = await prisma.registration.findUnique({ where: { phone } });
