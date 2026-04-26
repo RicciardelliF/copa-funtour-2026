@@ -10,6 +10,7 @@ export type RegistrationDTO = {
   teamName: string;
   city: string;
   localizador?: string;
+  week?: string;
   sports: Sport[];
   createdAt: string;
   updatedAt: string;
@@ -23,6 +24,7 @@ function toDTO(r: any): RegistrationDTO {
     teamName: r.teamName,
     city: r.city,
     localizador: r.localizador ?? undefined,
+    week: r.week || undefined,
     sports: (r.sports ?? []).map((s: any) => s.sport as Sport),
     createdAt: r.createdAt.toISOString(),
     updatedAt: r.updatedAt.toISOString(),
@@ -67,26 +69,35 @@ export type UpsertInput = {
   teamName: string;
   city: string;
   localizador?: string;
+  week?: string;
   sports: Sport[];
 };
 
+/**
+ * Crea o actualiza una inscripciÃ³n por telÃ©fono.
+ * 1) Escribe en la DB (fuente de verdad).
+ * 2) Reconcilia Google Sheets (best-effort, el error no rompe la operaciÃ³n principal).
+ */
 export async function upsertByPhone(input: UpsertInput): Promise<RegistrationDTO> {
   const phone = normalizePhone(input.phone);
-  if (!phone) throw new Error('Teléfono inválido');
+  if (!phone) throw new Error('TelÃ©fono invÃ¡lido');
 
   const data = {
     captain: input.captain.trim(),
     teamName: input.teamName.trim(),
     city: input.city.trim(),
     localizador: input.localizador?.trim() || null,
+    week: input.week?.trim() ?? '',
   };
 
+  // Si ya existe, actualizamos. Si no, creamos.
   const existing = await prisma.registration.findUnique({ where: { phone } });
 
   let registration;
   if (existing) {
     await prisma.$transaction(async tx => {
       await tx.registration.update({ where: { phone }, data });
+      // Reemplazamos deportes: borrar los que sobran y crear los que faltan
       const current = await tx.registrationSport.findMany({
         where: { registrationId: existing.id },
       });
@@ -124,25 +135,30 @@ export async function upsertByPhone(input: UpsertInput): Promise<RegistrationDTO
 
   const dto = toDTO(registration);
 
+  // Sync con Sheets â best-effort. Logueamos errores pero no rompemos al usuario.
   try {
     await reconcileRegistration(dto.id, toSheetRows(dto));
   } catch (err) {
-    console.error('[sheets] reconcile falló', err);
+    console.error('[sheets] reconcile fallÃ³', err);
   }
 
   return dto;
 }
 
+/**
+ * Actualiza una inscripciÃ³n desde el admin (incluye cambio de telÃ©fono).
+ */
 export async function updateById(
   id: string,
   input: UpsertInput,
 ): Promise<RegistrationDTO> {
   const phone = normalizePhone(input.phone);
-  if (!phone) throw new Error('Teléfono inválido');
+  if (!phone) throw new Error('TelÃ©fono invÃ¡lido');
 
+  // Validar unicidad de telÃ©fono si se estÃ¡ cambiando
   const other = await prisma.registration.findUnique({ where: { phone } });
   if (other && other.id !== id) {
-    throw new Error('Ese teléfono ya está registrado por otro equipo');
+    throw new Error('Ese telÃ©fono ya estÃ¡ registrado por otro equipo');
   }
 
   await prisma.$transaction(async tx => {
@@ -154,6 +170,7 @@ export async function updateById(
         teamName: input.teamName.trim(),
         city: input.city.trim(),
         localizador: input.localizador?.trim() || null,
+        week: input.week?.trim() ?? '',
       },
     });
     const current = await tx.registrationSport.findMany({ where: { registrationId: id } });
@@ -182,7 +199,7 @@ export async function updateById(
   try {
     await reconcileRegistration(dto.id, toSheetRows(dto));
   } catch (err) {
-    console.error('[sheets] reconcile falló', err);
+    console.error('[sheets] reconcile fallÃ³', err);
   }
   return dto;
 }
@@ -192,10 +209,13 @@ export async function deleteById(id: string): Promise<void> {
   try {
     await sheetsDelete(id);
   } catch (err) {
-    console.error('[sheets] delete falló', err);
+    console.error('[sheets] delete fallÃ³', err);
   }
 }
 
+/**
+ * Lista todas las inscripciones, ordenadas por fecha descendente.
+ */
 export async function listAll(): Promise<RegistrationDTO[]> {
   const rs = await prisma.registration.findMany({
     include: { sports: true },
@@ -204,6 +224,9 @@ export async function listAll(): Promise<RegistrationDTO[]> {
   return rs.map(toDTO);
 }
 
+/**
+ * Lista los equipos para la vista pÃºblica FOMO (sin deporte).
+ */
 export async function listPublic(): Promise<{ id: string; teamName: string; city: string; createdAt: string }[]> {
   const rs = await prisma.registration.findMany({
     orderBy: { createdAt: 'desc' },
@@ -217,6 +240,9 @@ export async function listPublic(): Promise<{ id: string; teamName: string; city
   }));
 }
 
+/**
+ * Conteos por deporte.
+ */
 export async function counts(): Promise<{ football: number; volleyball: number; teams: number }> {
   const [football, volleyball, teams] = await Promise.all([
     prisma.registrationSport.count({ where: { sport: 'football' } }),
@@ -226,6 +252,9 @@ export async function counts(): Promise<{ football: number; volleyball: number; 
   return { football, volleyball, teams };
 }
 
+/**
+ * CSV para exportar desde admin. Formato compatible con Excel (BOM + ; opcional).
+ */
 export async function exportCsv(): Promise<string> {
   const rows = await listAll();
   const header = ['registro_id', 'nombre', 'ciudad', 'telefono', 'equipo', 'deporte', 'creado_en', 'actualizado_en'];
@@ -256,6 +285,9 @@ function csvEscape(v: string): string {
   return v;
 }
 
+/**
+ * ResincronizaciÃ³n completa de Google Sheets desde la DB.
+ */
 export async function resyncAll(): Promise<{ ok: true; count: number }> {
   const all = await listAll();
   const rows: SheetRow[] = all.flatMap(r => toSheetRows(r));
