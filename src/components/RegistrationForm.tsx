@@ -11,6 +11,7 @@ export type Registration = {
   teamName: string;
   city: string;
   week?: string;
+  localizador?: string;
   sports: Sport[];
 };
 
@@ -25,7 +26,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
   const toast = useToast();
   const [captain, setCaptain] = useState(existing?.captain ?? '');
   const [teamName, setTeamName] = useState(existing?.teamName ?? '');
-  const [localizador, setLocalizador] = useState('');
+  const [localizador, setLocalizador] = useState(existing?.localizador ?? '');
   const [week, setWeek] = useState(existing?.week ?? '');
   const [province, setProvince] = useState(existing?.city ?? '');
   const [sports, setSports] = useState<Sport[]>(existing?.sports ?? []);
