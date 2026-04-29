@@ -85,7 +85,8 @@ function Dashboard({ initialRegistrations, initialCounts }: Props) {
         toast({ kind: 'error', title: 'Error al eliminar', desc: j.error ?? 'No se pudieron eliminar los equipos.' });
       } else {
         toast({ kind: 'success', title: 'Equipos eliminados', desc: 'Todos los equipos han sido eliminados.' });
-        setRegs([]);
+        setRegistrations([]);
+        setCounts({ football: 0, volleyball: 0, teams: 0 });
       }
     } catch (err: any) {
       toast({ kind: 'error', title: 'Error de conexión', desc: err.message });
