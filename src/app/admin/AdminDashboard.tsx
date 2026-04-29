@@ -33,6 +33,7 @@ function Dashboard({ initialRegistrations, initialCounts }: Props) {
   const [query, setQuery] = useState('');
   const [editing, setEditing] = useState<RegistrationDTO | null>(null);
   const [resyncing, setResyncing] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -72,6 +73,25 @@ function Dashboard({ initialRegistrations, initialCounts }: Props) {
     await fetch('/api/admin/logout', { method: 'POST' });
     router.replace('/admin/login');
     router.refresh();
+  }
+
+  async function handleDeleteAll() {
+    if (!confirm('¿Seguro que quieres eliminar TODOS los equipos? Esta acción no se puede deshacer.')) return;
+    setDeleting(true);
+    try {
+      const res = await fetch('/api/admin/registrations/all', { method: 'DELETE' });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        toast({ kind: 'error', title: 'Error al eliminar', desc: j.error ?? 'No se pudieron eliminar los equipos.' });
+      } else {
+        toast({ kind: 'success', title: 'Equipos eliminados', desc: 'Todos los equipos han sido eliminados.' });
+        setRegs([]);
+      }
+    } catch (err: any) {
+      toast({ kind: 'error', title: 'Error de conexión', desc: err.message });
+    } finally {
+      setDeleting(false);
+    }
   }
 
   async function handleResync() {
@@ -141,6 +161,9 @@ function Dashboard({ initialRegistrations, initialCounts }: Props) {
             <a href="/api/admin/export" className="btn-ghost !py-2">⬇️ Exportar CSV</a>
             <button onClick={handleResync} disabled={resyncing} className="btn-ghost !py-2">
               {resyncing ? 'Resincronizando...' : '🔁 Resync Google Sheets'}
+            </button>
+            <button onClick={handleDeleteAll} disabled={deleting} className="btn-ghost !py-2 text-red-600 hover:bg-red-50 border border-red-200">
+              {deleting ? 'Eliminando...' : '🗑️ Eliminar todo'}
             </button>
           </div>
         </section>
