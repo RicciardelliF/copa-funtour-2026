@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { isAdminAuthenticated } from '@/lib/auth';
 import { counts, listAll } from '@/lib/registrations';
-import { db } from '@/lib/db';
+import { prisma } from '@/lib/db';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -20,8 +20,8 @@ export async function DELETE() {
   }
 
   try {
-    await db.registrationSport.deleteMany({});
-    await db.registration.deleteMany({});
+    await prisma.registrationSport.deleteMany({});
+    await prisma.registration.deleteMany({});
     return NextResponse.json({ ok: true });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
