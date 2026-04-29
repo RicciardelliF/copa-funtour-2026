@@ -30,6 +30,7 @@ function Dashboard({ initialRegistrations, initialCounts }: Props) {
   const [registrations, setRegistrations] = useState<RegistrationDTO[]>(initialRegistrations);
   const [counts, setCounts] = useState<Counts>(initialCounts);
   const [filter, setFilter] = useState<Filter>('all');
+  const [weekFilter, setWeekFilter] = useState<string>('all');
   const [query, setQuery] = useState('');
   const [editing, setEditing] = useState<RegistrationDTO | null>(null);
   const [resyncing, setResyncing] = useState(false);
@@ -39,6 +40,7 @@ function Dashboard({ initialRegistrations, initialCounts }: Props) {
     const needle = query.trim().toLowerCase();
     return registrations.filter(r => {
       if (filter !== 'all' && !r.sports.includes(filter)) return false;
+      if (weekFilter !== 'all' && r.week !== weekFilter) return false;
       if (!needle) return true;
       return (
         r.teamName.toLowerCase().includes(needle) ||
@@ -47,7 +49,7 @@ function Dashboard({ initialRegistrations, initialCounts }: Props) {
         r.phone.includes(needle)
       );
     });
-  }, [registrations, filter, query]);
+  }, [registrations, filter, weekFilter, query]);
 
   async function refresh() {
     const res = await fetch('/api/admin/registrations');
@@ -146,6 +148,16 @@ function Dashboard({ initialRegistrations, initialCounts }: Props) {
               <FilterBtn active={filter === 'volleyball'} onClick={() => setFilter('volleyball')}>
                 🏐 Vóley <span className="ml-1 opacity-60">({counts.volleyball})</span>
               </FilterBtn>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 mt-2">
+              <FilterBtn active={weekFilter === 'all'} onClick={() => setWeekFilter('all')}>
+                Todas las semanas
+              </FilterBtn>
+              {['6-13 Jun', '13-20 Jun', '20-27 Jun', '27 Jun-4 Jul'].map(w => (
+                <FilterBtn key={w} active={weekFilter === w} onClick={() => setWeekFilter(w)}>
+                  {w}
+                </FilterBtn>
+              ))}
             </div>
             <div className="flex items-center gap-2">
               <input
