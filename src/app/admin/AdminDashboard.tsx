@@ -79,7 +79,7 @@ function Dashboard({ initialRegistrations, initialCounts }: Props) {
     if (!confirm('¿Seguro que quieres eliminar TODOS los equipos? Esta acción no se puede deshacer.')) return;
     setDeleting(true);
     try {
-      const res = await fetch('/api/admin/registrations/all', { method: 'DELETE' });
+      const res = await fetch('/api/admin/registrations', { method: 'DELETE' });
       if (!res.ok) {
         const j = await res.json().catch(() => ({}));
         toast({ kind: 'error', title: 'Error al eliminar', desc: j.error ?? 'No se pudieron eliminar los equipos.' });
