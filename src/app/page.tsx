@@ -151,7 +151,7 @@ function SavedView({ registration, onEdit, onExit }: { registration: Registratio
         <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-1">Antes de venir</p>
         <p className="text-sm text-amber-900">🧦 Trae calcetines para cubrirte de la arena caliente</p>
         <p className="text-sm text-amber-900">👕 Si tenéis camisetas, ¡es el momento para lucirlas!</p>
-        <p className="text-sm text-amber-900">📍 Nos vemos a las 16:30 en la playa de Llevant (a la altura del McDonald's — Paseo Jaume 1)</p>
+        <p className="text-sm text-amber-900">📍 Nos vemos a las 16:30 en la playa de Llevant — <a href="https://maps.app.goo.gl/Z3rGqkTMKz9NpZGG7" target="_blank" rel="noopener noreferrer" className="underline font-semibold text-amber-800">ubi del torneo</a></p>
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row">
