@@ -40,7 +40,13 @@ function Dashboard({ initialRegistrations, initialCounts }: Props) {
     const needle = query.trim().toLowerCase();
     return registrations.filter(r => {
       if (filter !== 'all' && !r.sports.includes(filter)) return false;
-      if (weekFilter !== 'all' && r.week !== weekFilter) return false;
+      if (weekFilter !== 'all') {
+        if (weekFilter === '7 y 10 Jun') {
+          if (r.week !== '7 Jun' && r.week !== '10 Jun' && r.week !== '7 y 10 Jun') return false;
+        } else {
+          if (r.week !== weekFilter) return false;
+        }
+      }
       if (!needle) return true;
       return (
         r.teamName.toLowerCase().includes(needle) ||
@@ -153,7 +159,7 @@ function Dashboard({ initialRegistrations, initialCounts }: Props) {
               <FilterBtn active={weekFilter === 'all'} onClick={() => setWeekFilter('all')}>
                 Todas las semanas
               </FilterBtn>
-              {['7 y 10 Jun', '17 Jun', '23 Jun', '30 Jun', '7 Jul'].map(w => (
+              {['7 y 10 Jun', '7 Jun', '10 Jun', '17 Jun', '23 Jun', '30 Jun', '7 Jul'].map(w => (
                 <FilterBtn key={w} active={weekFilter === w} onClick={() => setWeekFilter(w)}>
                   {w}
                 </FilterBtn>
@@ -327,7 +333,8 @@ function EditModal({
           <Field label="Semana">
             <select className="input" value={week} onChange={e => setWeek(e.target.value)}>
               <option value="">— Sin semana —</option>
-              <option value="7 y 10 Jun">7 y 10 Jun</option>
+              <option value="7 Jun">7 Jun (semana 7 y 10)</option>
+              <option value="10 Jun">10 Jun (semana 7 y 10)</option>
               <option value="17 Jun">17 Jun</option>
               <option value="23 Jun">23 Jun</option>
               <option value="30 Jun">30 Jun</option>
