@@ -153,7 +153,7 @@ function Dashboard({ initialRegistrations, initialCounts }: Props) {
               <FilterBtn active={weekFilter === 'all'} onClick={() => setWeekFilter('all')}>
                 Todas las semanas
               </FilterBtn>
-              {['6-13 Jun', '13-20 Jun', '20-27 Jun', '27 Jun-4 Jul'].map(w => (
+              {['7 y 10 Jun', '17 Jun', '23 Jun', '30 Jun', '7 Jul'].map(w => (
                 <FilterBtn key={w} active={weekFilter === w} onClick={() => setWeekFilter(w)}>
                   {w}
                 </FilterBtn>
@@ -327,10 +327,11 @@ function EditModal({
           <Field label="Semana">
             <select className="input" value={week} onChange={e => setWeek(e.target.value)}>
               <option value="">— Sin semana —</option>
-              <option value="6-13 Jun">6-13 Jun</option>
-              <option value="13-20 Jun">13-20 Jun</option>
-              <option value="20-27 Jun">20-27 Jun</option>
-              <option value="27 Jun-4 Jul">27 Jun-4 Jul</option>
+              <option value="7 y 10 Jun">7 y 10 Jun</option>
+              <option value="17 Jun">17 Jun</option>
+              <option value="23 Jun">23 Jun</option>
+              <option value="30 Jun">30 Jun</option>
+              <option value="7 Jul">7 Jul</option>
             </select>
           </Field>
           <Field label="Teléfono"><input className="input" value={phone} onChange={e => setPhone(e.target.value)} /></Field>
