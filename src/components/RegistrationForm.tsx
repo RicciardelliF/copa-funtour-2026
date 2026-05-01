@@ -172,7 +172,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
         </select>
       </Field>
 
-      {/* Número de localizador */}
+      {/* Número de reserva */}
       <div>
         <label className="mb-1.5 block text-sm font-semibold">
           Número de localizador
