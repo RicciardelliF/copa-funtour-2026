@@ -11,10 +11,6 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json({ error: 'Falta la contraseña' }, { status: 400 });
   }
-
-  // Rate limiting muy básico: pequeño delay para mitigar fuerza bruta
-  await new Promise(r => setTimeout(r, 400));
-
   if (!checkAdminPassword(parsed.data.password)) {
     return NextResponse.json({ error: 'Contraseña incorrecta' }, { status: 401 });
   }
