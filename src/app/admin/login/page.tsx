@@ -2,32 +2,33 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { Logo } from '@/components/Logo';
 
 export default function AdminLogin() {
-  const router = useRouter();
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (loading) return;
     setLoading(true);
     setError(null);
-    const res = await fetch('/api/admin/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password }),
-    });
-    setLoading(false);
-    if (!res.ok) {
-      const j = await res.json().catch(() => ({}));
-      setError(j.error ?? 'No se pudo iniciar sesión');
-      return;
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        setError(j.error ?? 'No se pudo iniciar sesión');
+        return;
+      }
+      window.location.href = '/admin';
+    } finally {
+      setLoading(false);
     }
-    router.replace('/admin');
-    router.refresh();
   }
 
   return (
