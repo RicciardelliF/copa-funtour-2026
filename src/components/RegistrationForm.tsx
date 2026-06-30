@@ -120,7 +120,7 @@ export function RegistrationForm({ initialPhone, existing, onSaved, onResetPhone
       <div>
         <p className="mb-3 text-sm font-semibold">Selecciona el día que estáis aquí 👇🏻</p>
         <div className="grid grid-cols-2 gap-3">
-          {['7 y 10 Jun', '17 Jun', '23 Jun', '30 Jun', '7 Jul'].map(w => (
+          {['7 y 10 Jun', '17 Jun', '23 Jun', '2 Jul', '7 Jul'].map(w => (
             <button
               key={w}
               type="button"
